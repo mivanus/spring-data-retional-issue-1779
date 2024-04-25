@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: spring-data-retional-issue-1779
+  sql:
+    init:
+      mode: always

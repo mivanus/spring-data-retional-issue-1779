@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: spring-data-retional-issue-1779
+  datasource:
+    driver-class-name: com.ibm.db2.jcc.DB2Driver
+  sql:
+    init:
+      mode: always
