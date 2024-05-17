@@ -4,20 +4,18 @@ import hr.mivanus.jdbc.AaaRepository;
 import hr.mivanus.model.Aaa;
 import hr.mivanus.model.Bbb;
 import hr.mivanus.model.Ccc;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
-import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.Db2Container;
 
-import java.util.Arrays;
+import java.util.Set;
 
 @SpringBootTest
 class SpringDataRetionalIssue1779ApplicationTests {
@@ -47,31 +45,28 @@ class SpringDataRetionalIssue1779ApplicationTests {
 
   @Test
   void testAaaRepository() {
-    var aaa = new Aaa();
-    aaa.setId(1);
-    aaa.setName("a");
-
-    template.insert(aaa);
-
-    var bbb = new Bbb();
-    bbb.setId(1);
-    bbb.setAaaId(1);
-    bbb.setName("b");
-
-    template.insert(bbb);
-
     var ccc = new Ccc();
-    ccc.setId(1);
+    ccc.setId(2);
     ccc.setBbbId(1);
     ccc.setName("c");
 
-    template.insert(ccc);
+    var bbb = new Bbb();
+    bbb.setId(3);
+    bbb.setAaaId(1);
+    bbb.setName("b");
+    bbb.setCcc(ccc);
 
-    var ex = Assertions.assertThrows(BadSqlGrammarException.class, () -> {
-      aaaRepository.findById(1);
+    var aaa = new Aaa();
+    aaa.setId(4);
+    aaa.setName("a");
+    aaa.setBbbs(Set.of(bbb));
+
+    template.insert(aaa);
+
+    var saved = aaaRepository.findById(aaa.getId());
+    Assertions.assertThat(saved).get().satisfies(a -> {
+      Assertions.assertThat(a.getBbbs()).isNotEmpty().allMatch(b -> b.getCcc() != null);
     });
-
-    System.out.println(ex.getMessage());
   }
 
 }

@@ -6,8 +6,8 @@ import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.MappedCollection;
 import org.springframework.data.relational.core.mapping.Table;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Table(name = "AAA", schema = "FTEST")
@@ -19,6 +19,6 @@ public class Aaa {
 
   @Column("NAME") private String name;
 
-  @MappedCollection(idColumn = "AAA_ID", keyColumn = "ID") private List<Bbb> bbbs = new ArrayList<>();
+  @MappedCollection(idColumn = "AAA_ID") private Set<Bbb> bbbs = new HashSet<>();
 
 }
